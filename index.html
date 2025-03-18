@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="description" content="Browse and discover books with direct links to Kindle, hardcover, and paperback versions. A curated collection of recommended books with affiliate links.">
+    <meta name="theme-color" content="#4a6fa5">
+    <meta name="robots" content="index, follow">
+    <meta name="keywords" content="books, reading, book recommendations, kindle books, hardcover books, paperback books, book affiliate links">
+    <meta property="og:title" content="Book Affiliate Library">
+    <meta property="og:description" content="Discover curated books with links to purchase on various platforms. Browse our collection of recommended reads.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://yourdomain.com/">
+    <meta property="og:image" content="https://yourdomain.com/images/og-image.jpg">
+    <link rel="canonical" href="https://yourdomain.com/">
+    <link rel="manifest" href="manifest.json">
+    <title>Book Affiliate Library - Curated Book Recommendations</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Inline styles for medium-sized banner */
+        header {
+            padding: 15px 0 !important; /* Medium padding */
+        }
+        
+        h1 {
+            font-size: 1.8rem !important; /* Medium font size */
+        }
+        
+        .header-actions .btn, .search-container input, .search-container button {
+            padding: 8px 15px !important; /* Medium padding for buttons and inputs */
+            font-size: 0.9rem !important; /* Medium font size */
+        }
+        
+        /* Medium size for featured books section */
+        .book-showcase h2 {
+            font-size: 1.6rem !important;
+            margin-top: 15px !important;
+        }
+        
+        .book-showcase p {
+            font-size: 0.9rem !important;
+            margin-bottom: 20px !important;
+        }
+        
+        /* Additional mobile optimizations */
+        @media (max-width: 480px) {
+            header {
+                padding: 10px 0 !important;
+            }
+            
+            h1 {
+                font-size: 1.5rem !important;
+            }
+            
+            .header-actions .btn {
+                font-size: 0.8rem !important;
+                padding: 6px 12px !important;
+            }
+            
+            .filter-container {
+                margin-bottom: 15px !important;
+            }
+            
+            /* Load critical CSS first */
+            .book-card, .book-cover, .book-info {
+                transition: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>My Book Library</h1>
+            <div class="header-actions">
+                <button id="addBookBtn" class="btn primary" aria-label="Add new book"><i class="fas fa-plus"></i> Add New Book</button>
+                <button id="adminLoginBtn" class="btn secondary" aria-label="Admin login"><i class="fas fa-lock"></i> Admin Login</button>
+                <button id="adminLogoutBtn" class="btn secondary" style="display: none;" aria-label="Admin logout"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Search books..." aria-label="Search books">
+                    <button id="searchBtn" aria-label="Search"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Featured Books 3D Showcase -->
+        <h2 style="text-align: center; margin-top: 15px; color: var(--primary-color);">Featured Books</h2>
+        <p style="text-align: center; margin-bottom: 20px;">Hover over a book to see it rotate</p>
+        
+        <div class="book-showcase" id="bookShowcase" role="region" aria-label="3D Book Showcase">
+            <!-- 3D books will be added here dynamically -->
+        </div>
+        
+        <!-- Filter and main book grid -->
+        <div class="filter-container">
+            <label for="filterSelect" class="visually-hidden">Filter books by format</label>
+            <select id="filterSelect" aria-label="Filter books by format">
+                <option value="all">All Books</option>
+                <option value="kindle">Kindle Available</option>
+                <option value="hardcover">Hardcover Available</option>
+                <option value="paperback">Paperback Available</option>
+            </select>
+        </div>
+        
+        <div id="booksContainer" class="books-grid" role="region" aria-label="Books Collection">
+            <!-- Books will be dynamically inserted here -->
+        </div>
+    </main>
+
+    <!-- Add/Edit Book Modal -->
+    <div id="bookModal" class="modal" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
+        <div class="modal-content">
+            <span class="close" aria-label="Close">&times;</span>
+            <h2 id="modalTitle">Add New Book</h2>
+            <form id="bookForm">
+                <input type="hidden" id="bookId">
+                
+                <div class="form-group">
+                    <label for="title">Title:</label>
+                    <input type="text" id="title" required autocomplete="off">
+                </div>
+                
+                <div class="form-group">
+                    <label for="author">Author:</label>
+                    <input type="text" id="author" required autocomplete="off">
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Description:</label>
+                    <textarea id="description" rows="4" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="coverUrl">Cover Image URL:</label>
+                    <input type="url" id="coverUrl" required autocomplete="off">
+                    <p class="help-text">Enter a direct URL to the book cover image</p>
+                </div>
+                
+                <div class="form-group">
+                    <label for="kindleLink">Kindle Affiliate Link:</label>
+                    <input type="url" id="kindleLink" autocomplete="off">
+                </div>
+                
+                <div class="form-group">
+                    <label for="hardcoverLink">Hardcover Affiliate Link:</label>
+                    <input type="url" id="hardcoverLink" autocomplete="off">
+                </div>
+                
+                <div class="form-group">
+                    <label for="paperbackLink">Paperback Affiliate Link:</label>
+                    <input type="url" id="paperbackLink" autocomplete="off">
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn primary">Save Book</button>
+                    <button type="button" id="cancelBtn" class="btn secondary">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal" role="dialog" aria-labelledby="deleteModalTitle" aria-hidden="true">
+        <div class="modal-content">
+            <h2 id="deleteModalTitle">Confirm Deletion</h2>
+            <p>Are you sure you want to delete this book?</p>
+            <div class="form-actions">
+                <button id="confirmDeleteBtn" class="btn danger">Delete</button>
+                <button id="cancelDeleteBtn" class="btn secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div id="adminLoginModal" class="modal" role="dialog" aria-labelledby="adminModalTitle" aria-hidden="true">
+        <div class="modal-content">
+            <span class="close" aria-label="Close">&times;</span>
+            <h2 id="adminModalTitle">Admin Login</h2>
+            <form id="adminLoginForm">
+                <div class="form-group">
+                    <label for="adminUsername">Username:</label>
+                    <input type="text" id="adminUsername" required autocomplete="off">
+                </div>
+                
+                <div class="form-group">
+                    <label for="adminPassword">Password:</label>
+                    <input type="password" id="adminPassword" required>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn primary">Login</button>
+                    <button type="button" class="btn secondary close-admin-modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Book Affiliate Library</p>
+        </div>
+    </footer>
+
+    <!-- Add the visually-hidden utility class -->
+    <style>
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            margin: -1px;
+            padding: 0;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+    </style>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+    
+    <!-- Structured Data for SEO -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Book Affiliate Library",
+        "url": "https://yourdomain.com/",
+        "description": "Browse and discover books with direct links to Kindle, hardcover, and paperback versions.",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://yourdomain.com/?search={search_term_string}",
+            "query-input": "required name=search_term_string"
+        }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "url": "https://yourdomain.com/#book1",
+                "name": "Featured Book 1"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "url": "https://yourdomain.com/#book2",
+                "name": "Featured Book 2"
+            },
+            {
+                "@type": "ListItem",
+                "position": 3,
+                "url": "https://yourdomain.com/#book3",
+                "name": "Featured Book 3"
+            }
+        ]
+    }
+    </script>
+</body>
+</html> 
